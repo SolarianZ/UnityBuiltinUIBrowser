@@ -21,3 +21,7 @@ Install this package via [OpenUPM](https://openupm.com/packages/com.greenbamboog
 ## How to use
 
 Open the Editor Icons Overview window from the menu **Tools/Bamboo/Editor Icons Overview**.
+
+---
+
+**Thanks to [halak/unity-editor-icons](https://github.com/halak/unity-editor-icons)** .
