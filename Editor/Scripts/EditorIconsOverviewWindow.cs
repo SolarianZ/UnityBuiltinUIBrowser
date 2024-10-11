@@ -11,9 +11,25 @@ namespace GBG.EditorIconsOverview.Editor
             GetWindow<EditorIconsOverviewWindow>().Focus();
         }
 
+
+        #region Icons
+
+        [SerializeField]
+        private Texture2D _clipboardIcon;
+
+        #endregion
+
+
         private void OnEnable()
         {
             titleContent = new GUIContent("Editor Icons Overview");
+        }
+
+        private void CreateGUI()
+        {
+            IconElement icon = new IconElement();
+            icon.Image.image = _clipboardIcon;
+            rootVisualElement.Add(icon);
         }
 
 
