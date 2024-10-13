@@ -144,14 +144,17 @@ namespace GBG.EditorIconsOverview.Editor
             GenericMenu menu = new GenericMenu();
 
             menu.AddItem(new GUIContent("Copy IconContent Code"), false, CopyIconContentCodeToClipboard);
-            menu.AddItem(new GUIContent("Copy Name (No d_ Prefix)",
-                "Unity will automatically append d_ prefix based on the Editor theme."),
+            menu.AddItem(new GUIContent("Copy Name without 'd_' Prefix",
+                "Unity will automatically append 'd_' prefix based on the Editor theme."),
                 false, CopyIconNameToClipboard);
-            menu.AddItem(new GUIContent("Copy Raw Name"), false, CopyRawIconNameToClipboard);
+            menu.AddItem(new GUIContent("Copy Name"), false, CopyRawIconNameToClipboard);
             menu.AddItem(new GUIContent("Copy File ID"), false, CopyIconFileIdToClipboard);
             menu.AddSeparator("");
 
             menu.AddItem(new GUIContent("Inspect"), false, IconHandle.Inspect);
+            menu.AddSeparator("");
+
+            menu.AddItem(new GUIContent("Save as"), false, IconHandle.SaveAs);
 
             menu.ShowAsContext();
         }

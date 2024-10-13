@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.IO;
 using UnityEditor;
 using UnityEngine;
 using UObject = UnityEngine.Object;
@@ -34,7 +34,7 @@ namespace GBG.EditorIconsOverview.Editor
             Selection.activeObject = LoadAsset();
         }
 
-        public void SaveAs()
+        public virtual void SaveAs()
         {
             UObject asset = LoadAsset();
             if (!asset)
@@ -44,17 +44,37 @@ namespace GBG.EditorIconsOverview.Editor
             }
 
             string ext = null;
-            Type assetType = asset.GetType();
-            if (typeof(ScriptableObject).IsAssignableFrom(assetType))
+            if (asset is ScriptableObject)
                 ext = "asset";
+            else if (asset is Texture)
+                ext = "png";
 
             string savePath = EditorUtility.SaveFilePanelInProject($"Save {AssetName}", AssetName, ext,
                  "Make sure the extension is correct");
             if (string.IsNullOrEmpty(savePath))
                 return;
 
-            AssetDatabase.CreateAsset(asset, savePath);
-            AssetDatabase.Refresh(); ;
+            // ScriptableObject
+            if (asset is ScriptableObject scriptableObject)
+            {
+                ScriptableObject newInstance = UObject.Instantiate(scriptableObject);
+                AssetDatabase.CreateAsset(newInstance, savePath);
+                AssetDatabase.Refresh();
+                Debug.Log($"Export asset '{AssetName}' to {savePath}", newInstance);
+                return;
+            }
+
+            // Texture2D
+            if (asset is Texture2D texture)
+            {
+                Texture2D readableTexture = new Texture2D(texture.width, texture.height, texture.format, texture.mipmapCount > 1);
+                Graphics.CopyTexture(texture, readableTexture);
+                File.WriteAllBytes(savePath, readableTexture.EncodeToPNG());
+                Debug.Log($"Export asset '{AssetName}' to {savePath}", AssetDatabase.LoadAssetAtPath<UObject>(savePath));
+                return;
+            }
+
+            Debug.LogError($"The 'Save as' function for objects of type '{asset.GetType().FullName}' is not implemented.", asset);
         }
     }
 }

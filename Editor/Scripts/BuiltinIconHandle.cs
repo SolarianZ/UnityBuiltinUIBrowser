@@ -6,12 +6,12 @@ using UObject = UnityEngine.Object;
 
 namespace GBG.EditorIconsOverview.Editor
 {
-    public class BuiltinIconHandle
+    public class BuiltinIconHandle : BuiltinAssetHandle
     {
         public string RawIconName { get; }
 
 
-        public BuiltinIconHandle(string rawIconName)
+        public BuiltinIconHandle(string rawIconName) : base(rawIconName)
         {
             RawIconName = rawIconName;
         }
@@ -54,12 +54,6 @@ namespace GBG.EditorIconsOverview.Editor
                 Debug.LogError($"Invalid Texture: {loaded}.", loaded);
 
             return icon;
-        }
-
-        public void Inspect()
-        {
-            Texture texture = LoadTexture();
-            Selection.activeObject = texture;
         }
 
 
