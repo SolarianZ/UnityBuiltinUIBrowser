@@ -8,9 +8,14 @@ namespace GBG.EditorIconsOverview.Editor
     {
         public const float MinHeight = 40;
 
+#if UNITY_2021_3_OR_NEWER
         public Image Image { get; }
+#else
+        internal IMGUIImageElement Image { get; }
+#endif
         public Label NameLabel { get; }
         public Label SizeLabel { get; }
+        public Label IndexLabel { get; }
 
         public BuiltinIconHandle IconHandle { get; private set; }
 
@@ -54,7 +59,11 @@ namespace GBG.EditorIconsOverview.Editor
             Add(imageContainer);
 
             // Image
+#if UNITY_2021_3_OR_NEWER
             Image = new Image();
+#else
+            Image = new IMGUIImageElement();
+#endif
             imageContainer.Add(Image);
 
             #endregion
@@ -67,7 +76,7 @@ namespace GBG.EditorIconsOverview.Editor
                 style =
                 {
                     flexGrow = 1,
-                    flexShrink = 0,
+                    flexShrink = 1,
                     paddingLeft = 2,
                     paddingRight = 2,
                 }
@@ -109,13 +118,34 @@ namespace GBG.EditorIconsOverview.Editor
 
             #endregion
 
+
+            #region Index
+
+            // Index Label
+            IndexLabel = new Label
+            {
+                style =
+                {
+                    flexGrow = 0,
+                    flexShrink = 0,
+                    unityTextAlign = TextAnchor.LowerRight,
+                    fontSize = 11,
+                }
+            };
+            Add(IndexLabel);
+
+            #endregion
         }
 
-        public void SetIconHandle(BuiltinIconHandle iconHandle)
+        public void SetIconHandle(BuiltinIconHandle iconHandle, int index)
         {
             IconHandle = iconHandle;
             Texture texture = IconHandle.LoadTexture();
+#if UNITY_2021_3_OR_NEWER
             Image.image = texture;
+#else
+            Image.Image = texture;
+#endif
             NameLabel.text = IconHandle.RawIconName;
             if (texture)
             {
@@ -125,11 +155,13 @@ namespace GBG.EditorIconsOverview.Editor
             {
 #if UNITY_2021_3_OR_NEWER
                 SizeLabel.enableRichText = true;
-                SizeLabel.text = "<color=red>INVALID TEXTURE</color>"; 
+                SizeLabel.text = "<color=red>INVALID TEXTURE</color>";
 #else
                 SizeLabel.text = "INVALID TEXTURE";
 #endif
             }
+
+            IndexLabel.text = (index + 1).ToString();
         }
 
 
@@ -182,7 +214,7 @@ namespace GBG.EditorIconsOverview.Editor
 
         public void CopyIconFileIdToClipboard()
         {
-            AssetDatabase.TryGetGUIDAndLocalFileIdentifier(Image.image, out string guid, out long localId);
+            AssetDatabase.TryGetGUIDAndLocalFileIdentifier(IconHandle.LoadAsset(), out string guid, out long localId);
             GUIUtility.systemCopyBuffer = localId.ToString();
         }
     }

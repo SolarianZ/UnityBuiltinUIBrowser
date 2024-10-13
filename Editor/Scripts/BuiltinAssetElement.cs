@@ -7,10 +7,15 @@ namespace GBG.EditorIconsOverview.Editor
 {
     public class BuiltinAssetElement : VisualElement
     {
-        public const float MinHeight = 30;
+        public const float MinHeight = 32;
 
+#if UNITY_2021_3_OR_NEWER
         public Image Image { get; }
+#else
+        internal IMGUIImageElement Image { get; }
+#endif
         public Label NameLabel { get; }
+        public Label IndexLabel { get; }
 
         public BuiltinAssetHandle AssetHandle { get; private set; }
 
@@ -56,7 +61,11 @@ namespace GBG.EditorIconsOverview.Editor
             Add(imageContainer);
 
             // Image
+#if UNITY_2021_3_OR_NEWER
             Image = new Image();
+#else
+            Image = new IMGUIImageElement();
+#endif
             imageContainer.Add(Image);
 
             #endregion
@@ -69,7 +78,7 @@ namespace GBG.EditorIconsOverview.Editor
                 style =
                 {
                     flexGrow = 1,
-                    flexShrink = 0,
+                    flexShrink = 1,
                     paddingLeft = 2,
                     paddingRight = 2,
                 }
@@ -95,15 +104,39 @@ namespace GBG.EditorIconsOverview.Editor
 
             #endregion
 
+
+            #region Index
+
+            // Index Label
+            IndexLabel = new Label
+            {
+                style =
+                {
+                    flexGrow = 0,
+                    flexShrink = 0,
+                    unityTextAlign = TextAnchor.LowerRight,
+                    fontSize = 11,
+                }
+            };
+            Add(IndexLabel);
+
+            #endregion
         }
 
-        public void SetAssetHandle(BuiltinAssetHandle assetHandle)
+        public void SetAssetHandle(BuiltinAssetHandle assetHandle, int index)
         {
             AssetHandle = assetHandle;
             _asset = AssetHandle.LoadAsset();
 
-            Image.image = AssetPreview.GetMiniThumbnail(_asset);
+            Texture2D thumbnail = AssetPreview.GetMiniThumbnail(_asset);
+#if UNITY_2021_3_OR_NEWER
+            Image.image = thumbnail;
+#else
+            Image.Image = thumbnail;
+#endif
             NameLabel.text = AssetHandle.AssetName;
+
+            IndexLabel.text = (index + 1).ToString();
         }
 
 
@@ -117,7 +150,7 @@ namespace GBG.EditorIconsOverview.Editor
             {
                 AssetHandle.Inspect();
             }
-        } 
+        }
 
         private void OnContextClick(ContextClickEvent evt)
         {

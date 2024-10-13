@@ -31,8 +31,6 @@ namespace GBG.EditorIconsOverview.Editor
                 handles.Add(handle);
             }
 
-            Debug.Log($"{handles.Count} editor built-in uss found.");
-
             return handles;
         }
     }

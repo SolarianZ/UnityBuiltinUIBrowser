@@ -84,7 +84,7 @@ namespace GBG.EditorIconsOverview.Editor
                 makeItem = MakeItem,
                 bindItem = BindItem,
 #if UNITY_2021_3_OR_NEWER
-                showAlternatingRowBackgrounds = AlternatingRowBackground.ContentOnly, 
+                showAlternatingRowBackgrounds = AlternatingRowBackground.ContentOnly,
 #else
                 style =
                 {
@@ -141,9 +141,9 @@ namespace GBG.EditorIconsOverview.Editor
                 ? new List<BuiltinAssetHandle>(_allAssetHandles)
                 : _allAssetHandles
 #if UNITY_2021_3_OR_NEWER
-                    .Where(handle => handle.AssetName.Contains(searchContent, StringComparison.OrdinalIgnoreCase)) 
+                    .Where(handle => handle.AssetName.Contains(searchContent, StringComparison.OrdinalIgnoreCase))
 #else
-                    .Where(handle => handle.AssetName.ToUpperInvariant().Contains(searchContent.ToUpperInvariant())) 
+                    .Where(handle => handle.AssetName.ToUpperInvariant().Contains(searchContent.ToUpperInvariant()))
 #endif
                     .ToList();
 
@@ -152,7 +152,7 @@ namespace GBG.EditorIconsOverview.Editor
                 _assetListView.itemsSource = _filteredAssetHandles;
 #if UNITY_2021_3_OR_NEWER
                 _assetListView.fixedItemHeight = listItemHeight;
-                _assetListView.Rebuild(); 
+                _assetListView.Rebuild();
 #else
                 _assetListView.itemHeight = (int)listItemHeight;
                 _assetListView.Refresh();
@@ -167,20 +167,35 @@ namespace GBG.EditorIconsOverview.Editor
 
         private void OnSearchContentChanged(ChangeEvent<string> evt)
         {
+            object selection = _assetListView.selectedItem;
+
             string searchContent = evt.newValue;
             _filteredAssetHandles = _allAssetHandles
 #if UNITY_2021_3_OR_NEWER
-                .Where(handle => handle.AssetName.Contains(searchContent, StringComparison.OrdinalIgnoreCase)) 
+                .Where(handle => handle.AssetName.Contains(searchContent, StringComparison.OrdinalIgnoreCase))
 #else
                 .Where(handle => handle.AssetName.ToUpperInvariant().Contains(searchContent.ToUpperInvariant()))
 #endif
                 .ToList();
             _assetListView.itemsSource = _filteredAssetHandles;
+
+            int newSelectionIndex = -1;
+            if (selection != null)
+            {
+                newSelectionIndex = _filteredAssetHandles.FindIndex(item => item == selection);
+            }
+
 #if UNITY_2021_3_OR_NEWER
-            _assetListView.Rebuild(); 
+            _assetListView.Rebuild();
 #else
             _assetListView.Refresh();
 #endif
+
+            if (newSelectionIndex > -1)
+            {
+                _assetListView.selectedIndex = newSelectionIndex;
+                _assetListView.ScrollToItem(newSelectionIndex);
+            }
         }
 
         private VisualElement MakeItem()
@@ -207,13 +222,15 @@ namespace GBG.EditorIconsOverview.Editor
             {
                 case UIResType.Icon:
                     BuiltinIconElement iconElement = element as BuiltinIconElement;
-                    iconElement?.SetIconHandle((BuiltinIconHandle)_assetListView.itemsSource[index]);
+                    BuiltinIconHandle iconHandle = (BuiltinIconHandle)_assetListView.itemsSource[index];
+                    iconElement?.SetIconHandle(iconHandle, _allAssetHandles.IndexOf(iconHandle));
                     break;
 
                 case UIResType.StyleSheet:
                 case UIResType.VisualTree:
                     BuiltinAssetElement assetElement = element as BuiltinAssetElement;
-                    assetElement?.SetAssetHandle((BuiltinAssetHandle)_assetListView.itemsSource[index]);
+                    BuiltinAssetHandle assetHandle = (BuiltinAssetHandle)_assetListView.itemsSource[index];
+                    assetElement?.SetAssetHandle(assetHandle, _allAssetHandles.IndexOf(assetHandle));
                     break;
 
                 default:
