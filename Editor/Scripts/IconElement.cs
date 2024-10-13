@@ -112,67 +112,51 @@ namespace GBG.EditorIconsOverview.Editor
 
         }
 
-        private void OnContextClick(ContextClickEvent evt)
-        {
-            bool hasSkin = IconHandle.HasSkin();
-            GenericMenu menu = new GenericMenu();
-
-            if (hasSkin)
-            {
-                menu.AddItem(new GUIContent("Copy IconContent Code with Skin"), false, CopyIconContentCodeWithSkinToClipboard);
-            }
-            menu.AddItem(new GUIContent("Copy IconContent Code"), false, CopyIconContentCodeToClipboard);
-
-            if (hasSkin)
-            {
-                menu.AddItem(new GUIContent("Copy Icon Name Code with Skin"), false, CopyIconNameCodeWithSkinToClipboard);
-            }
-            menu.AddItem(new GUIContent("Copy Icon Name"), false, CopyIconNameToClipboard);
-
-            menu.AddItem(new GUIContent("Copy Icon File ID"), false, CopyIconFileIdToClipboard);
-
-            menu.ShowAsContext();
-        }
-
-
         public void SetIconHandle(IconHandle iconHandle)
         {
             IconHandle = iconHandle;
-            Texture2D texture = IconHandle.GetTexture2D();
+            Texture2D texture = IconHandle.LoadIcon();
             Image.image = texture;
-            NameLabel.text = IconHandle.IconName;
+            NameLabel.text = IconHandle.RawIconName;
             SizeLabel.text = $"{texture.width}x{texture.height}";
 
             // TODO: Skin Bg
             //_imageContainer.style.backgroundColor = 
         }
 
-        public void CopyIconContentCodeWithSkinToClipboard()
+
+        private void OnContextClick(ContextClickEvent evt)
         {
-            string code = IconHandle.GetIconContentCodeWithSkin();
-            GUIUtility.systemCopyBuffer = code;
+            GenericMenu menu = new GenericMenu();
+
+            menu.AddItem(new GUIContent("Copy IconContent Code"), false, CopyIconContentCodeToClipboard);
+            menu.AddItem(new GUIContent("Copy Icon Name", 
+                "Remove the \"d_\" prefix (Unity will automatically append it based on the Editor theme)."), 
+                false, CopyIconNameToClipboard);
+            menu.AddItem(new GUIContent("Copy Raw Icon Name"), false, CopyRawIconNameToClipboard);
+            menu.AddItem(new GUIContent("Copy Icon File ID"), false, CopyIconFileIdToClipboard);
+
+            menu.ShowAsContext();
         }
 
         public void CopyIconContentCodeToClipboard()
         {
-            string code = IconHandle.GetIconContentCode();
-            GUIUtility.systemCopyBuffer = code;
-        }
-
-        public void CopyIconNameCodeWithSkinToClipboard()
-        {
-            GUIUtility.systemCopyBuffer = IconHandle.GetNameCodeWithSkin();
+            GUIUtility.systemCopyBuffer = IconHandle.GetIconContentCode();
         }
 
         public void CopyIconNameToClipboard()
         {
-            GUIUtility.systemCopyBuffer = IconHandle.IconName;
+            GUIUtility.systemCopyBuffer = IconHandle.GetIconName();
+        }
+
+        public void CopyRawIconNameToClipboard()
+        {
+            GUIUtility.systemCopyBuffer = IconHandle.RawIconName;
         }
 
         public void CopyIconFileIdToClipboard()
         {
-            AssetDatabase.TryGetGUIDAndLocalFileIdentifier(Image.image, out string guid, out long localId);
-            GUIUtility.systemCopyBuffer = localId.ToString();
+            GUIUtility.systemCopyBuffer = EditorIconUtility.GetObjectLocalFileId(Image.image).ToString();
         }
     }
 }

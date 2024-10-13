@@ -73,7 +73,7 @@ namespace GBG.EditorIconsOverview.Editor
         {
             string searchContent = evt.newValue;
             _filteredIconHandles = _allIconHandles
-                .Where(handle => handle.IconName.Contains(searchContent, StringComparison.OrdinalIgnoreCase))
+                .Where(handle => handle.RawIconName.Contains(searchContent, StringComparison.OrdinalIgnoreCase))
                 .ToList();
             _iconListView.itemsSource = _filteredIconHandles;
             _iconListView.Rebuild();

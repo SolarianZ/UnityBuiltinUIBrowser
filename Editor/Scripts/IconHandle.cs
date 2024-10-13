@@ -7,19 +7,33 @@ namespace GBG.EditorIconsOverview.Editor
 {
     public class IconHandle
     {
-        public string IconName { get; }
+        public string RawIconName { get; }
         public HashSet<string> IconNameSet { get; }
 
 
-        public IconHandle(string iconName, HashSet<string> iconNameSet)
+        public IconHandle(string rawIconName, HashSet<string> rawIconNameSet)
         {
-            IconName = iconName;
-            IconNameSet = iconNameSet;
+            RawIconName = rawIconName;
+            IconNameSet = rawIconNameSet;
         }
 
-        public string GetCharacterlessName()
+        public string GetIconName()
         {
-            string characterlessName = IconName;
+            // Unity会根据主题自动追加 d_ 前缀
+            if (RawIconName.StartsWith("d_", StringComparison.OrdinalIgnoreCase))
+                return RawIconName.Substring(2);
+
+            return RawIconName;
+        }
+
+        public string GetIconContentCode()
+        {
+            return $"EditorGUIUtility.IconContent(\"{GetIconName()}\", \"|\"); // tips: \"text|tooltip\"";
+        }
+
+        internal string GetCharacterlessName()
+        {
+            string characterlessName = RawIconName;
             if (characterlessName.StartsWith("d_", StringComparison.OrdinalIgnoreCase))
             {
                 characterlessName = characterlessName.Substring(2);
@@ -33,73 +47,9 @@ namespace GBG.EditorIconsOverview.Editor
             return characterlessName;
         }
 
-        public Texture2D GetTexture2D()
+        public Texture2D LoadIcon()
         {
-            //Texture2D icon = (Texture2D)EditorGUIUtility.LoadRequired(IconName); // 加载到的Icon模糊
-            GUIContent iconContent = EditorGUIUtility.IconContent(IconName);
-            Texture2D icon = (Texture2D)iconContent.image;
-
-            return icon;
-        }
-
-        public bool HasSkin()
-        {
-            string anotherSkinName = GetAnotherSkinName(out _);
-            return IconNameSet.Contains(anotherSkinName);
-        }
-
-        public string GetAnotherSkinName(out bool anotherIsProSkin)
-        {
-            string anotherSkinName;
-            if (IconName.StartsWith("d_", StringComparison.OrdinalIgnoreCase))
-            {
-                anotherSkinName = IconName.Substring(2);
-                anotherIsProSkin = false;
-            }
-            else
-            {
-                anotherSkinName = "d_" + IconName;
-                anotherIsProSkin = true;
-            }
-
-            return anotherSkinName;
-        }
-
-        public string GetNameCodeWithSkin()
-        {
-            string anotherSkinName = GetAnotherSkinName(out bool anotherIsProSkin);
-            if (!IconNameSet.Contains(anotherSkinName))
-            {
-                return $"\"{IconName}\";";
-            }
-
-            if (anotherIsProSkin)
-            {
-                return $"EditorGUIUtility.isProSkin ? \"{anotherSkinName}\" : \"{IconName}\";";
-            }
-
-            return $"EditorGUIUtility.isProSkin ? \"{IconName}\" : \"{anotherSkinName}\";";
-        }
-
-        public string GetIconContentCodeWithSkin()
-        {
-            string anotherSkinName = GetAnotherSkinName(out bool anotherIsProSkin);
-            if (!IconNameSet.Contains(anotherSkinName))
-            {
-                return $"EditorGUIUtility.IconContent(\"{IconName}\", \"|\"); // tips: \"text|tooltip\"";
-            }
-
-            if (anotherIsProSkin)
-            {
-                return $"EditorGUIUtility.IconContent(EditorGUIUtility.isProSkin ? \"{anotherSkinName}\" : \"{IconName}\", \"|\"); // tips: \"text|tooltip\"";
-            }
-
-            return $"EditorGUIUtility.IconContent(EditorGUIUtility.isProSkin ? \"{IconName}\" : \"{anotherSkinName}\", \"|\"); // tips: \"text|tooltip\"";
-        }
-
-        public string GetIconContentCode()
-        {
-            return $"EditorGUIUtility.IconContent(\"{IconName}\", \"|\"); // tips: \"text|tooltip\"";
+            return (Texture2D)EditorGUIUtility.LoadRequired(RawIconName);
         }
 
 
@@ -130,26 +80,26 @@ namespace GBG.EditorIconsOverview.Editor
                 return ret;
             }
 
-            if (a.IconName.StartsWith("d_", StringComparison.OrdinalIgnoreCase) &&
-                !b.IconName.StartsWith("d_", StringComparison.OrdinalIgnoreCase))
+            if (a.RawIconName.StartsWith("d_", StringComparison.OrdinalIgnoreCase) &&
+                !b.RawIconName.StartsWith("d_", StringComparison.OrdinalIgnoreCase))
             {
                 return EditorGUIUtility.isProSkin ? 1 : -1;
             }
 
-            if (!a.IconName.StartsWith("d_", StringComparison.OrdinalIgnoreCase) &&
-                b.IconName.StartsWith("d_", StringComparison.OrdinalIgnoreCase))
+            if (!a.RawIconName.StartsWith("d_", StringComparison.OrdinalIgnoreCase) &&
+                b.RawIconName.StartsWith("d_", StringComparison.OrdinalIgnoreCase))
             {
                 return EditorGUIUtility.isProSkin ? -1 : 1;
             }
 
-            if (a.IconName.EndsWith("@2x", StringComparison.OrdinalIgnoreCase) &&
-                !b.IconName.EndsWith("@2x", StringComparison.OrdinalIgnoreCase))
+            if (a.RawIconName.EndsWith("@2x", StringComparison.OrdinalIgnoreCase) &&
+                !b.RawIconName.EndsWith("@2x", StringComparison.OrdinalIgnoreCase))
             {
                 return 1;
             }
 
-            if (!a.IconName.EndsWith("@2x", StringComparison.OrdinalIgnoreCase) &&
-                b.IconName.EndsWith("@2x", StringComparison.OrdinalIgnoreCase))
+            if (!a.RawIconName.EndsWith("@2x", StringComparison.OrdinalIgnoreCase) &&
+                b.RawIconName.EndsWith("@2x", StringComparison.OrdinalIgnoreCase))
             {
                 return -1;
             }
