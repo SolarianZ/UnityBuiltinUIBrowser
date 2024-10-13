@@ -31,7 +31,13 @@ namespace GBG.EditorIconsOverview.Editor
 
         public void Inspect()
         {
+#if UNITY_2022_3_OR_NEWER
             Selection.activeObject = LoadAsset();
+#else
+            UObject asset = LoadAsset();
+            asset.hideFlags &= ~HideFlags.HideInInspector;
+            Selection.activeObject = asset;
+#endif
         }
 
         public virtual void SaveAs()
