@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -14,8 +13,6 @@ namespace GBG.EditorIconsOverview.Editor
         public Label SizeLabel { get; }
 
         public BuiltinIconHandle IconHandle { get; private set; }
-
-        private readonly VisualElement _imageContainer;
 
 
         public BuiltinIconElement()
@@ -33,7 +30,7 @@ namespace GBG.EditorIconsOverview.Editor
 
             #region Image
 
-            _imageContainer = new VisualElement
+            VisualElement imageContainer = new VisualElement
             {
                 style =
                 {
@@ -50,11 +47,11 @@ namespace GBG.EditorIconsOverview.Editor
                     overflow = Overflow.Hidden,
                 }
             };
-            Add(_imageContainer);
+            Add(imageContainer);
 
             // Image
             Image = new Image();
-            _imageContainer.Add(Image);
+            imageContainer.Add(Image);
 
             #endregion
 
@@ -125,9 +122,6 @@ namespace GBG.EditorIconsOverview.Editor
                 SizeLabel.enableRichText = true;
                 SizeLabel.text = "<color=red>INVALID TEXTURE</color>";
             }
-
-            // TODO: Skin Bg
-            //_imageContainer.style.backgroundColor = 
         }
 
 

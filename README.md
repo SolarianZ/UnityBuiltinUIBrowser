@@ -3,6 +3,8 @@
 浏览Unity Editor内置的UI资源。<br/>
 Browse the Unity Editor built-in UI resources.
 
+![Built-in UI Res Browser](./Documents~/imgs/img_sample_builtin_ui_res_browser.png)
+
 ## 支持的Unity版本<br/>Supported Unity Version
 
 Unity 2019.4及更新版本。<br/>
@@ -10,16 +12,10 @@ Unity 2019.4 and later.
 
 ## 安装方法<br/>Installation
 
-TODO
-
-<!--
-
 [![openupm](https://img.shields.io/npm/v/com.greenbamboogames.builtinuiresbrowser?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.greenbamboogames.builtinuiresbrowser/)
 
 从 [OpenUPM](https://openupm.com/packages/com.greenbamboogames.builtinuiresbrowser) 安装此插件，或者直接克隆此仓库到项目中。
 Install this package via [OpenUPM](https://openupm.com/packages/com.greenbamboogames.builtinuiresbrowser), or clone this repository directly into the Packages folder of your project.
-
--->
 
 ## 如何使用<br/>How to use
 
