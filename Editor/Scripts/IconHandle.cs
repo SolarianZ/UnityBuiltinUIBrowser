@@ -115,6 +115,8 @@ namespace GBG.EditorIconsOverview.Editor
             }
 
             handles.Sort(IconHandleComparison);
+            Debug.Log($"{handles.Count} editor built-in icons found.");
+
             return handles;
         }
 

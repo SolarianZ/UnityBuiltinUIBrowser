@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text;
 using UnityEditor;
 using UnityEditor.Experimental;
 using UnityEngine;
-using UnityEngine.Assertions;
 using UObject = UnityEngine.Object;
 
 namespace GBG.EditorIconsOverview.Editor
@@ -17,8 +13,8 @@ namespace GBG.EditorIconsOverview.Editor
     {
         public static AssetBundle GetEditorAssetBundle()
         {
-            MethodInfo getEditorAssetBundle = typeof(EditorGUIUtility).GetMethod(
-                "GetEditorAssetBundle", BindingFlags.NonPublic | BindingFlags.Static);
+            MethodInfo getEditorAssetBundle = typeof(EditorGUIUtility).GetMethod("GetEditorAssetBundle",
+                BindingFlags.NonPublic | BindingFlags.Static);
             return (AssetBundle)getEditorAssetBundle.Invoke(null, null);
         }
 
@@ -33,8 +29,8 @@ namespace GBG.EditorIconsOverview.Editor
                 if (assetName.StartsWith(iconsPath, StringComparison.OrdinalIgnoreCase) == false)
                     continue;
 
-                if (assetName.EndsWith(".png", StringComparison.OrdinalIgnoreCase) == false &&
-                    assetName.EndsWith(".asset", StringComparison.OrdinalIgnoreCase) == false)
+                if (!assetName.EndsWith(".png", StringComparison.OrdinalIgnoreCase) &&
+                    !assetName.EndsWith(".asset", StringComparison.OrdinalIgnoreCase))
                     continue;
 
                 string shortName = Path.GetFileNameWithoutExtension(assetName);
@@ -42,7 +38,7 @@ namespace GBG.EditorIconsOverview.Editor
             }
         }
 
-        internal static long GetObjectLocalFileId(this UObject obj)
+        public static long GetObjectLocalFileId(this UObject obj)
         {
             AssetDatabase.TryGetGUIDAndLocalFileIdentifier(obj, out string guid, out long localId);
             return localId;

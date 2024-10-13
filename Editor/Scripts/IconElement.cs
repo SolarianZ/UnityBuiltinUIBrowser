@@ -43,6 +43,8 @@ namespace GBG.EditorIconsOverview.Editor
                     justifyContent = Justify.Center,
                     paddingLeft = 2,
                     paddingRight = 2,
+                    paddingTop = 2,
+                    paddingBottom = 2,
                     overflow = Overflow.Hidden,
                 }
             };
@@ -97,9 +99,11 @@ namespace GBG.EditorIconsOverview.Editor
                 {
                     flexGrow = 1,
                     flexShrink = 0,
-                    minHeight = 12,
+                    minHeight = 11,
                     maxHeight = 14,
                     unityTextAlign = TextAnchor.MiddleLeft,
+                    unityFontStyleAndWeight = FontStyle.Italic,
+                    fontSize = 11,
                 }
             };
             labelContainer.Add(SizeLabel);
@@ -124,6 +128,8 @@ namespace GBG.EditorIconsOverview.Editor
                 menu.AddItem(new GUIContent("Copy Icon Name Code with Skin"), false, CopyIconNameCodeWithSkinToClipboard);
             }
             menu.AddItem(new GUIContent("Copy Icon Name"), false, CopyIconNameToClipboard);
+
+            menu.AddItem(new GUIContent("Copy Icon File ID"), false, CopyIconFileIdToClipboard);
 
             menu.ShowAsContext();
         }
@@ -161,6 +167,12 @@ namespace GBG.EditorIconsOverview.Editor
         public void CopyIconNameToClipboard()
         {
             GUIUtility.systemCopyBuffer = IconHandle.IconName;
+        }
+
+        public void CopyIconFileIdToClipboard()
+        {
+            AssetDatabase.TryGetGUIDAndLocalFileIdentifier(Image.image, out string guid, out long localId);
+            GUIUtility.systemCopyBuffer = localId.ToString();
         }
     }
 }
