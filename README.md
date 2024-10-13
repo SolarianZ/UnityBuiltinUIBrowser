@@ -25,11 +25,11 @@ Open the Editor Icons Overview window from the menu **Tools/Bamboo/Editor Icons 
 左键双击条目，可以在Inspector中检视该条目。<br/>
 Double-click on an entry to inspect it in the Inspector.
 
-右键点击图标条目，可以复制图标名称及代码（Unity会自动根据主题为图标追加 `d_` 前缀）。<br/>
-Right-click on an icon entry to copy the icon name and code (Unity will automatically append `d_` prefix based on the theme).
+右键点击图标条目，可以复制图标名字或代码（Unity会自动根据主题为图标追加 `d_` 前缀）。<br/>
+Right-click on an icon entry to copy the icon name or code (Unity will automatically append `d_` prefix based on the theme).
 
-右键点击Uss和Uxml条目，可以复制文件路径或将其导出。<br/>
-Right-click on a Uss or Uxml entry to copy the file path or export it.
+右键点击StyleSheet和VisualTreeAsset条目，可以复制资产名字、代码或将其导出。<br/>
+Right-click on a StyleSheet or VisualTreeAsset entry to copy the asset name, code or export it.
 
 ---
 
