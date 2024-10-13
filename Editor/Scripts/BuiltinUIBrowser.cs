@@ -8,12 +8,12 @@ using UnityEngine.UIElements;
 
 namespace GBG.EditorIconsOverview.Editor
 {
-    public class EditorIconsOverviewWindow : EditorWindow, IHasCustomMenu
+    public class BuiltinUIBrowser : EditorWindow, IHasCustomMenu
     {
-        [MenuItem("Tools/Bamboo/Editor Icons Overview")]
+        [MenuItem("Tools/Bamboo/Built-in UI Browser")]
         public static void Open()
         {
-            GetWindow<EditorIconsOverviewWindow>().Focus();
+            GetWindow<BuiltinUIBrowser>().Focus();
         }
 
 
@@ -26,9 +26,9 @@ namespace GBG.EditorIconsOverview.Editor
 
         private void OnEnable()
         {
-            titleContent = new GUIContent("Editor Icons Overview");
+            titleContent = new GUIContent("Built-in UI Browser");
 
-            string[] iconNames = EditorIconUtility.EnumerateEditorIconNames().ToArray();
+            List<string> iconNames = BuiltinAssetUtility.GetBuiltinIconNames();
             _allIconHandles = IconHandle.CreateHandles(iconNames);
             _filteredIconHandles = new List<IconHandle>(_allIconHandles);
         }

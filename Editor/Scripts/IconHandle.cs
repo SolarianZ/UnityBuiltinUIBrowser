@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UObject = UnityEngine.Object;
 
 namespace GBG.EditorIconsOverview.Editor
 {
@@ -47,9 +48,14 @@ namespace GBG.EditorIconsOverview.Editor
             return characterlessName;
         }
 
-        public Texture2D LoadIcon()
+        public Texture LoadIcon()
         {
-            return (Texture2D)EditorGUIUtility.LoadRequired(RawIconName);
+            UObject loaded = EditorGUIUtility.LoadRequired(RawIconName);
+            Texture icon = loaded as Texture;
+            if (!icon)
+                Debug.LogError($"Invalid icon: {loaded}.", loaded);
+
+            return icon;
         }
 
 

@@ -1,6 +1,6 @@
 {
-    "name": "GBG.EditorIconsOverview.Editor",
-    "rootNamespace": "GBG.EditorIconsOverview.Editor",
+    "name": "GBG.BuiltinUIBrowser.Editor",
+    "rootNamespace": "GBG.BuiltinUIBrowser.Editor",
     "references": [],
     "includePlatforms": [
         "Editor"

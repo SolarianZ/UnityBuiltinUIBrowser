@@ -1,8 +1,8 @@
 {
-  "name": "com.greenbamboogames.editoriconsoverview",
+  "name": "com.greenbamboogames.builtinuibrowser",
   "version": "1.0.0-preview",
-  "displayName": "Editor Icons Overview!",
-  "description": "Overview built-in icons in Unity Editor.",
+  "displayName": "Built-in UI Browser!",
+  "description": "Browser built-in icon, uss and uxml in Unity Editor.",
   "unity": "2019.4",
   "documentationUrl": "https://github.com/SolarianZ/UnityEditorIconsOverview",
   "changelogUrl": "https://github.com/SolarianZ/UnityEditorIconsOverview/releases",

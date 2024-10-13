@@ -115,10 +115,18 @@ namespace GBG.EditorIconsOverview.Editor
         public void SetIconHandle(IconHandle iconHandle)
         {
             IconHandle = iconHandle;
-            Texture2D texture = IconHandle.LoadIcon();
+            Texture texture = IconHandle.LoadIcon();
             Image.image = texture;
             NameLabel.text = IconHandle.RawIconName;
-            SizeLabel.text = $"{texture.width}x{texture.height}";
+            if (texture)
+            {
+                SizeLabel.text = $"{texture.width}x{texture.height}";
+            }
+            else
+            {
+                SizeLabel.enableRichText = true;
+                SizeLabel.text = "<color=red>INVALID TEXTURE</color>";
+            }
 
             // TODO: Skin Bg
             //_imageContainer.style.backgroundColor = 
@@ -130,8 +138,8 @@ namespace GBG.EditorIconsOverview.Editor
             GenericMenu menu = new GenericMenu();
 
             menu.AddItem(new GUIContent("Copy IconContent Code"), false, CopyIconContentCodeToClipboard);
-            menu.AddItem(new GUIContent("Copy Icon Name", 
-                "Remove the \"d_\" prefix (Unity will automatically append it based on the Editor theme)."), 
+            menu.AddItem(new GUIContent("Copy Icon Name",
+                "Remove the \"d_\" prefix (Unity will automatically append it based on the Editor theme)."),
                 false, CopyIconNameToClipboard);
             menu.AddItem(new GUIContent("Copy Raw Icon Name"), false, CopyRawIconNameToClipboard);
             menu.AddItem(new GUIContent("Copy Icon File ID"), false, CopyIconFileIdToClipboard);
@@ -156,7 +164,8 @@ namespace GBG.EditorIconsOverview.Editor
 
         public void CopyIconFileIdToClipboard()
         {
-            GUIUtility.systemCopyBuffer = EditorIconUtility.GetObjectLocalFileId(Image.image).ToString();
+            AssetDatabase.TryGetGUIDAndLocalFileIdentifier(Image.image, out string guid, out long localId);
+            GUIUtility.systemCopyBuffer = localId.ToString();
         }
     }
 }
