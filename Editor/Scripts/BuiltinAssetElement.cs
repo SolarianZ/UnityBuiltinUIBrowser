@@ -26,7 +26,9 @@ namespace GBG.EditorIconsOverview.Editor
             style.paddingBottom = 1;
             style.minHeight = MinHeight;
 
+#if UNITY_2021_3_OR_NEWER
             RegisterCallback<ClickEvent>(OnClick);
+#endif
             RegisterCallback<ContextClickEvent>(OnContextClick);
 
 
@@ -103,13 +105,15 @@ namespace GBG.EditorIconsOverview.Editor
         }
 
 
+#if UNITY_2021_3_OR_NEWER
         private void OnClick(ClickEvent evt)
         {
             if (evt.clickCount == 2)
             {
                 AssetHandle.Inspect();
             }
-        }
+        } 
+#endif
 
         private void OnContextClick(ContextClickEvent evt)
         {

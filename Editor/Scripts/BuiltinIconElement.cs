@@ -24,7 +24,9 @@ namespace GBG.EditorIconsOverview.Editor
             style.paddingBottom = 1;
             style.minHeight = MinHeight;
 
-            RegisterCallback<ClickEvent>(OnClick);
+#if UNITY_2021_3_OR_NEWER
+            RegisterCallback<ClickEvent>(OnClick); 
+#endif
             RegisterCallback<ContextClickEvent>(OnContextClick);
 
 
@@ -119,19 +121,25 @@ namespace GBG.EditorIconsOverview.Editor
             }
             else
             {
+#if UNITY_2021_3_OR_NEWER
                 SizeLabel.enableRichText = true;
-                SizeLabel.text = "<color=red>INVALID TEXTURE</color>";
+                SizeLabel.text = "<color=red>INVALID TEXTURE</color>"; 
+#else
+                SizeLabel.text = "INVALID TEXTURE";
+#endif
             }
         }
 
 
+#if UNITY_2021_3_OR_NEWER
         private void OnClick(ClickEvent evt)
         {
             if (evt.clickCount == 2)
             {
                 IconHandle.Inspect();
             }
-        }
+        } 
+#endif
 
         private void OnContextClick(ContextClickEvent evt)
         {

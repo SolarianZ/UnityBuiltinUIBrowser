@@ -78,13 +78,19 @@ namespace GBG.EditorIconsOverview.Editor
             _searchField.RegisterValueChangedCallback(OnSearchContentChanged);
             toolbar.Add(_searchField);
 
-            // Icon ListView
+            // ListView
             _assetListView = new ListView
             {
-                fixedItemHeight = BuiltinIconElement.MinHeight,
                 makeItem = MakeItem,
                 bindItem = BindItem,
-                showAlternatingRowBackgrounds = AlternatingRowBackground.ContentOnly,
+#if UNITY_2021_3_OR_NEWER
+                showAlternatingRowBackgrounds = AlternatingRowBackground.ContentOnly, 
+#else
+                style =
+                {
+                    flexGrow = 1,
+                },
+#endif
             };
             rootVisualElement.Add(_assetListView);
 
@@ -133,14 +139,24 @@ namespace GBG.EditorIconsOverview.Editor
             string searchContent = _searchField?.value ?? string.Empty;
             _filteredAssetHandles = string.IsNullOrEmpty(searchContent)
                 ? new List<BuiltinAssetHandle>(_allAssetHandles)
-                : _allAssetHandles.Where(handle => handle.AssetName.Contains(searchContent, StringComparison.OrdinalIgnoreCase))
-                                  .ToList();
+                : _allAssetHandles
+#if UNITY_2021_3_OR_NEWER
+                    .Where(handle => handle.AssetName.Contains(searchContent, StringComparison.OrdinalIgnoreCase)) 
+#else
+                    .Where(handle => handle.AssetName.ToUpperInvariant().Contains(searchContent.ToUpperInvariant())) 
+#endif
+                    .ToList();
 
             if (_assetListView != null)
             {
                 _assetListView.itemsSource = _filteredAssetHandles;
+#if UNITY_2021_3_OR_NEWER
                 _assetListView.fixedItemHeight = listItemHeight;
-                _assetListView.Rebuild();
+                _assetListView.Rebuild(); 
+#else
+                _assetListView.itemHeight = (int)listItemHeight;
+                _assetListView.Refresh();
+#endif
             }
         }
 
@@ -153,10 +169,18 @@ namespace GBG.EditorIconsOverview.Editor
         {
             string searchContent = evt.newValue;
             _filteredAssetHandles = _allAssetHandles
-                .Where(handle => handle.AssetName.Contains(searchContent, StringComparison.OrdinalIgnoreCase))
+#if UNITY_2021_3_OR_NEWER
+                .Where(handle => handle.AssetName.Contains(searchContent, StringComparison.OrdinalIgnoreCase)) 
+#else
+                .Where(handle => handle.AssetName.ToUpperInvariant().Contains(searchContent.ToUpperInvariant()))
+#endif
                 .ToList();
             _assetListView.itemsSource = _filteredAssetHandles;
-            _assetListView.Rebuild();
+#if UNITY_2021_3_OR_NEWER
+            _assetListView.Rebuild(); 
+#else
+            _assetListView.Refresh();
+#endif
         }
 
         private VisualElement MakeItem()
