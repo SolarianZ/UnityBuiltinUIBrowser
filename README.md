@@ -14,10 +14,10 @@ TODO
 
 <!--
 
-[![openupm](https://img.shields.io/npm/v/com.greenbamboogames.editoriconsoverview?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.greenbamboogames.editoriconsoverview/)
+[![openupm](https://img.shields.io/npm/v/com.greenbamboogames.builtinuiresbrowser?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.greenbamboogames.builtinuiresbrowser/)
 
-从 [OpenUPM](https://openupm.com/packages/com.greenbamboogames.editoriconsoverview) 安装此插件，或者直接克隆此仓库到项目中。
-Install this package via [OpenUPM](https://openupm.com/packages/com.greenbamboogames.editoriconsoverview), or clone this repository directly into the Packages folder of your project.
+从 [OpenUPM](https://openupm.com/packages/com.greenbamboogames.builtinuiresbrowser) 安装此插件，或者直接克隆此仓库到项目中。
+Install this package via [OpenUPM](https://openupm.com/packages/com.greenbamboogames.builtinuiresbrowser), or clone this repository directly into the Packages folder of your project.
 
 -->
 

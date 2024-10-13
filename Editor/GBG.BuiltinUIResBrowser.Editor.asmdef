@@ -1,6 +1,6 @@
 {
-    "name": "GBG.BuiltinUIBrowser.Editor",
-    "rootNamespace": "GBG.BuiltinUIBrowser.Editor",
+    "name": "GBG.BuiltinUIResBrowser.Editor",
+    "rootNamespace": "GBG.BuiltinUIResBrowser.Editor",
     "references": [],
     "includePlatforms": [
         "Editor"

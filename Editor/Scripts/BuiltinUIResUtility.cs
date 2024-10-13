@@ -9,7 +9,7 @@ using UObject = UnityEngine.Object;
 
 namespace GBG.EditorIconsOverview.Editor
 {
-    public static class BuiltinAssetUtility
+    public static class BuiltinUIResUtility
     {
         public static AssetBundle GetEditorAssetBundle()
         {
