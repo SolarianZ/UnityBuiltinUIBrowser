@@ -28,6 +28,8 @@ namespace GBG.EditorIconsOverview.Editor
 
 #if UNITY_2021_3_OR_NEWER
             RegisterCallback<ClickEvent>(OnClick);
+#else
+            RegisterCallback<PointerDownEvent>(OnClick);
 #endif
             RegisterCallback<ContextClickEvent>(OnContextClick);
 
@@ -107,13 +109,15 @@ namespace GBG.EditorIconsOverview.Editor
 
 #if UNITY_2021_3_OR_NEWER
         private void OnClick(ClickEvent evt)
+#else
+        private void OnClick(PointerDownEvent evt)
+#endif
         {
             if (evt.clickCount == 2)
             {
                 AssetHandle.Inspect();
             }
         } 
-#endif
 
         private void OnContextClick(ContextClickEvent evt)
         {
