@@ -70,6 +70,7 @@ namespace GBG.EditorIconsOverview.Editor
                 Texture2D readableTexture = new Texture2D(texture.width, texture.height, texture.format, texture.mipmapCount > 1);
                 Graphics.CopyTexture(texture, readableTexture);
                 File.WriteAllBytes(savePath, readableTexture.EncodeToPNG());
+                AssetDatabase.Refresh();
                 Debug.Log($"Export asset '{AssetName}' to {savePath}", AssetDatabase.LoadAssetAtPath<UObject>(savePath));
                 return;
             }
