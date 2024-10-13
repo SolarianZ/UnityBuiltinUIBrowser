@@ -6,16 +6,14 @@ using UObject = UnityEngine.Object;
 
 namespace GBG.EditorIconsOverview.Editor
 {
-    public class IconHandle
+    public class BuiltinIconHandle
     {
         public string RawIconName { get; }
-        public HashSet<string> IconNameSet { get; }
 
 
-        public IconHandle(string rawIconName, HashSet<string> rawIconNameSet)
+        public BuiltinIconHandle(string rawIconName)
         {
             RawIconName = rawIconName;
-            IconNameSet = rawIconNameSet;
         }
 
         public string GetIconName()
@@ -48,25 +46,30 @@ namespace GBG.EditorIconsOverview.Editor
             return characterlessName;
         }
 
-        public Texture LoadIcon()
+        public Texture LoadTexture()
         {
             UObject loaded = EditorGUIUtility.LoadRequired(RawIconName);
             Texture icon = loaded as Texture;
             if (!icon)
-                Debug.LogError($"Invalid icon: {loaded}.", loaded);
+                Debug.LogError($"Invalid Texture: {loaded}.", loaded);
 
             return icon;
         }
 
-
-        public static List<IconHandle> CreateHandles(IReadOnlyList<string> iconNames)
+        public void Inspect()
         {
-            HashSet<string> iconNameSet = new HashSet<string>(iconNames);
-            List<IconHandle> handles = new List<IconHandle>();
+            Texture texture = LoadTexture();
+            Selection.activeObject = texture;
+        }
+
+
+        public static List<BuiltinIconHandle> CreateHandles(IReadOnlyList<string> iconNames)
+        {
+            List<BuiltinIconHandle> handles = new List<BuiltinIconHandle>();
             for (int i = 0; i < iconNames.Count; i++)
             {
                 string iconName = iconNames[i];
-                IconHandle handle = new IconHandle(iconName, iconNameSet);
+                BuiltinIconHandle handle = new BuiltinIconHandle(iconName);
                 handles.Add(handle);
             }
 
@@ -76,7 +79,7 @@ namespace GBG.EditorIconsOverview.Editor
             return handles;
         }
 
-        public static int IconHandleComparison(IconHandle a, IconHandle b)
+        public static int IconHandleComparison(BuiltinIconHandle a, BuiltinIconHandle b)
         {
             string characterlessNameA = a.GetCharacterlessName();
             string characterlessNameB = b.GetCharacterlessName();

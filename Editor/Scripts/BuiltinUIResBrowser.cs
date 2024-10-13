@@ -18,8 +18,8 @@ namespace GBG.EditorIconsOverview.Editor
 
 
         private ListView _iconListView;
-        private List<IconHandle> _allIconHandles;
-        private List<IconHandle> _filteredIconHandles;
+        private List<BuiltinIconHandle> _allIconHandles;
+        private List<BuiltinIconHandle> _filteredIconHandles;
 
 
         #region Unity Messages
@@ -29,8 +29,8 @@ namespace GBG.EditorIconsOverview.Editor
             titleContent = new GUIContent("Built-in UI Res Browser");
 
             List<string> iconNames = BuiltinUIResUtility.GetBuiltinIconNames();
-            _allIconHandles = IconHandle.CreateHandles(iconNames);
-            _filteredIconHandles = new List<IconHandle>(_allIconHandles);
+            _allIconHandles = BuiltinIconHandle.CreateHandles(iconNames);
+            _filteredIconHandles = new List<BuiltinIconHandle>(_allIconHandles);
         }
 
         private void ShowButton(Rect pos)
@@ -59,7 +59,7 @@ namespace GBG.EditorIconsOverview.Editor
             toolbar.Add(iconSearchField);
 
             // Icon ListView
-            _iconListView = new ListView(_filteredIconHandles, IconElement.MinHeight, MakeItem, BindItem)
+            _iconListView = new ListView(_filteredIconHandles, BuiltinIconElement.MinHeight, MakeItem, BindItem)
             {
                 showAlternatingRowBackgrounds = AlternatingRowBackground.ContentOnly,
             };
@@ -81,13 +81,13 @@ namespace GBG.EditorIconsOverview.Editor
 
         private VisualElement MakeItem()
         {
-            return new IconElement();
+            return new BuiltinIconElement();
         }
 
         private void BindItem(VisualElement element, int index)
         {
-            IconElement iconElement = (IconElement)element;
-            IconHandle iconHandle = (IconHandle)_iconListView.itemsSource[index];
+            BuiltinIconElement iconElement = (BuiltinIconElement)element;
+            BuiltinIconHandle iconHandle = (BuiltinIconHandle)_iconListView.itemsSource[index];
             iconElement.SetIconHandle(iconHandle);
         }
 

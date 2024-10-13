@@ -26,6 +26,9 @@ Install this package via [OpenUPM](https://openupm.com/packages/com.greenbamboog
 从工具栏菜单 **Tools/Bamboo/Editor Icons Overview** 打开工具窗口。<br/>
 Open the Editor Icons Overview window from the menu **Tools/Bamboo/Editor Icons Overview**.
 
+左键双击条目，可以在Inspector中检视该条目。<br/>
+Double-click on an entry to inspect it in the Inspector.
+
 右键点击图标条目，可以复制图标名称及代码（Unity会自动根据主题为图标追加 `d_` 前缀）。<br/>
 Right-click on an icon entry to copy the icon name and code (Unity will automatically append `d_` prefix based on the theme).
 

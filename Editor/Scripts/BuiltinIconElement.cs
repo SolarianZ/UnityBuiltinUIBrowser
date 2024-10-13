@@ -1,10 +1,11 @@
-﻿using UnityEditor;
+﻿using System;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace GBG.EditorIconsOverview.Editor
 {
-    public class IconElement : VisualElement
+    public class BuiltinIconElement : VisualElement
     {
         public const float MinHeight = 40;
 
@@ -12,20 +13,21 @@ namespace GBG.EditorIconsOverview.Editor
         public Label NameLabel { get; }
         public Label SizeLabel { get; }
 
-        public IconHandle IconHandle { get; private set; }
+        public BuiltinIconHandle IconHandle { get; private set; }
 
         private readonly VisualElement _imageContainer;
 
 
-        public IconElement()
+        public BuiltinIconElement()
         {
             style.flexDirection = FlexDirection.Row;
             style.paddingLeft = 2;
             style.paddingRight = 2;
             style.paddingTop = 1;
             style.paddingBottom = 1;
-            style.maxHeight = MinHeight;
+            style.minHeight = MinHeight;
 
+            RegisterCallback<ClickEvent>(OnClick);
             RegisterCallback<ContextClickEvent>(OnContextClick);
 
 
@@ -74,8 +76,6 @@ namespace GBG.EditorIconsOverview.Editor
             // Name Label
             NameLabel = new Label
             {
-                text = "icon name",
-                name = "icon-element__name-label",
                 //selection =
                 //{
                 //    isSelectable = true,
@@ -93,8 +93,6 @@ namespace GBG.EditorIconsOverview.Editor
             // Size Label
             SizeLabel = new Label
             {
-                text = "icon size",
-                name = "icon-element__size-label",
                 style =
                 {
                     flexGrow = 1,
@@ -112,10 +110,10 @@ namespace GBG.EditorIconsOverview.Editor
 
         }
 
-        public void SetIconHandle(IconHandle iconHandle)
+        public void SetIconHandle(BuiltinIconHandle iconHandle)
         {
             IconHandle = iconHandle;
-            Texture texture = IconHandle.LoadIcon();
+            Texture texture = IconHandle.LoadTexture();
             Image.image = texture;
             NameLabel.text = IconHandle.RawIconName;
             if (texture)
@@ -133,16 +131,27 @@ namespace GBG.EditorIconsOverview.Editor
         }
 
 
+        private void OnClick(ClickEvent evt)
+        {
+            if (evt.clickCount == 2)
+            {
+                IconHandle.Inspect();
+            }
+        }
+
         private void OnContextClick(ContextClickEvent evt)
         {
             GenericMenu menu = new GenericMenu();
 
             menu.AddItem(new GUIContent("Copy IconContent Code"), false, CopyIconContentCodeToClipboard);
-            menu.AddItem(new GUIContent("Copy Icon Name",
-                "Remove the \"d_\" prefix (Unity will automatically append it based on the Editor theme)."),
+            menu.AddItem(new GUIContent("Copy Name (No d_ Prefix)",
+                "Unity will automatically append d_ prefix based on the Editor theme."),
                 false, CopyIconNameToClipboard);
-            menu.AddItem(new GUIContent("Copy Raw Icon Name"), false, CopyRawIconNameToClipboard);
-            menu.AddItem(new GUIContent("Copy Icon File ID"), false, CopyIconFileIdToClipboard);
+            menu.AddItem(new GUIContent("Copy Raw Name"), false, CopyRawIconNameToClipboard);
+            menu.AddItem(new GUIContent("Copy File ID"), false, CopyIconFileIdToClipboard);
+            menu.AddSeparator("");
+
+            menu.AddItem(new GUIContent("Inspect"), false, IconHandle.Inspect);
 
             menu.ShowAsContext();
         }
