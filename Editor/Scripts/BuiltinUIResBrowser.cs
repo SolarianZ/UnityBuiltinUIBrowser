@@ -38,7 +38,7 @@ namespace GBG.EditorIconsOverview.Editor
         {
             if (GUI.Button(pos, EditorGUIUtility.IconContent("_Help"), GUI.skin.FindStyle("IconButton")))
             {
-                Application.OpenURL("https://github.com/SolarianZ/UnityEditorIconsOverview");
+                Application.OpenURL("https://github.com/SolarianZ/UnityBuiltinUIResBrowser");
             }
         }
 
@@ -205,7 +205,7 @@ namespace GBG.EditorIconsOverview.Editor
             // Source Code
             menu.AddItem(new GUIContent("Source Code"), false, () =>
             {
-                Application.OpenURL("https://github.com/SolarianZ/UnityEditorIconsOverview");
+                Application.OpenURL("https://github.com/SolarianZ/UnityBuiltinUIResBrowser");
             });
         }
 

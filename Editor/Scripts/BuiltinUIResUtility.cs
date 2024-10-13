@@ -5,7 +5,6 @@ using System.Reflection;
 using UnityEditor;
 using UnityEditor.Experimental;
 using UnityEngine;
-using UObject = UnityEngine.Object;
 
 namespace GBG.EditorIconsOverview.Editor
 {
@@ -54,7 +53,7 @@ namespace GBG.EditorIconsOverview.Editor
                     !assetName.EndsWith("uss.asset", StringComparison.OrdinalIgnoreCase)) // *uss.asset
                     continue;
 
-                string shortName = Path.GetFileNameWithoutExtension(assetName);
+                string shortName = Path.GetFileName(assetName);
                 shortNames.Add(shortName);
             }
 
@@ -70,10 +69,10 @@ namespace GBG.EditorIconsOverview.Editor
             foreach (string assetName in editorAssetBundle.GetAllAssetNames())
             {
                 if (!assetName.EndsWith(".uxml", StringComparison.OrdinalIgnoreCase) &&
-                    !assetName.EndsWith("uxml.asset", StringComparison.OrdinalIgnoreCase)) // *uss.asset
+                    !assetName.EndsWith("uxml.asset", StringComparison.OrdinalIgnoreCase)) // *uxml.asset
                     continue;
 
-                string shortName = Path.GetFileNameWithoutExtension(assetName);
+                string shortName = Path.GetFileName(assetName);
                 shortNames.Add(shortName);
             }
 
