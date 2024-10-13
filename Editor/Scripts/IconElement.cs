@@ -6,6 +6,8 @@ namespace GBG.EditorIconsOverview.Editor
 {
     public class IconElement : VisualElement
     {
+        public const float MinHeight = 40;
+
         public Image Image { get; }
         public Label NameLabel { get; }
         public Label SizeLabel { get; }
@@ -13,36 +15,41 @@ namespace GBG.EditorIconsOverview.Editor
         public IconHandle IconHandle { get; private set; }
 
         private readonly VisualElement _imageContainer;
-        private bool _isImageBgInProSkin;
 
 
         public IconElement()
         {
             style.flexDirection = FlexDirection.Row;
+            style.paddingLeft = 2;
+            style.paddingRight = 2;
+            style.paddingTop = 1;
+            style.paddingBottom = 1;
+            style.maxHeight = MinHeight;
+
+            RegisterCallback<ContextClickEvent>(OnContextClick);
 
 
             #region Image
 
             _imageContainer = new VisualElement
             {
-                name = "icon-element__image-container",
                 style =
                 {
                     width = 100,
                     minWidth = 100,
                     maxWidth = 100,
                     flexShrink = 0,
+                    alignItems = Align.Center,
+                    justifyContent = Justify.Center,
+                    paddingLeft = 2,
+                    paddingRight = 2,
                     overflow = Overflow.Hidden,
                 }
             };
-            SetImageBackgroundSkin(EditorGUIUtility.isProSkin);
             Add(_imageContainer);
 
             // Image
-            Image = new Image
-            {
-                name = "icon-element__image",
-            };
+            Image = new Image();
             _imageContainer.Add(Image);
 
             #endregion
@@ -52,10 +59,12 @@ namespace GBG.EditorIconsOverview.Editor
 
             VisualElement labelContainer = new VisualElement
             {
-                name = "icon-element__label-container",
                 style =
                 {
                     flexGrow = 1,
+                    flexShrink = 0,
+                    paddingLeft = 2,
+                    paddingRight = 2,
                 }
             };
             Add(labelContainer);
@@ -63,99 +72,95 @@ namespace GBG.EditorIconsOverview.Editor
             // Name Label
             NameLabel = new Label
             {
+                text = "icon name",
                 name = "icon-element__name-label",
+                //selection =
+                //{
+                //    isSelectable = true,
+                //},
+                style =
+                {
+                    flexGrow = 1,
+                    flexShrink = 0,
+                    unityTextAlign = TextAnchor.MiddleLeft,
+                    fontSize = 15,
+                }
             };
             labelContainer.Add(NameLabel);
 
             // Size Label
-
-            VisualElement sizeLabelContainer = new VisualElement
-            {
-                name = "icon-element__label-container__size",
-                style =
-                {
-                    flexGrow = 1,
-                    flexDirection = FlexDirection.Row,
-                }
-            };
-            labelContainer.Add(sizeLabelContainer);
-
             SizeLabel = new Label
             {
+                text = "icon size",
                 name = "icon-element__size-label",
                 style =
                 {
                     flexGrow = 1,
+                    flexShrink = 0,
+                    minHeight = 12,
+                    maxHeight = 14,
+                    unityTextAlign = TextAnchor.MiddleLeft,
                 }
             };
-            sizeLabelContainer.Add(SizeLabel);
-
-            Button switchSizeButton = new Button()
-            {
-                text = "2x",
-                name = "icon-element__button__switch-size",
-            };
-            sizeLabelContainer.Add(switchSizeButton);
+            labelContainer.Add(SizeLabel);
 
             #endregion
 
-
-            #region Buttons
-
-            VisualElement buttonContainer = new VisualElement
-            {
-                name = "icon-element__button-container",
-                style =
-                {
-                    flexGrow = 1,
-                }
-            };
-            Add(buttonContainer);
-
-            // Copy Icon Name Button
-            Button copyIconNameButton = new Button(CopyIconNameToClipboard)
-            {
-                text = "N",
-            };
-            buttonContainer.Add(copyIconNameButton);
-
-            // Copy IconContent Code Button
-            Button copyIconContentCodeButton = new Button(CopyIconContentCodeToClipboard)
-            {
-                text = "C",
-            };
-            buttonContainer.Add(copyIconContentCodeButton);
-
-            #endregion
         }
+
+        private void OnContextClick(ContextClickEvent evt)
+        {
+            bool hasSkin = IconHandle.HasSkin();
+            GenericMenu menu = new GenericMenu();
+
+            if (hasSkin)
+            {
+                menu.AddItem(new GUIContent("Copy IconContent Code with Skin"), false, CopyIconContentCodeWithSkinToClipboard);
+            }
+            menu.AddItem(new GUIContent("Copy IconContent Code"), false, CopyIconContentCodeToClipboard);
+
+            if (hasSkin)
+            {
+                menu.AddItem(new GUIContent("Copy Icon Name Code with Skin"), false, CopyIconNameCodeWithSkinToClipboard);
+            }
+            menu.AddItem(new GUIContent("Copy Icon Name"), false, CopyIconNameToClipboard);
+
+            menu.ShowAsContext();
+        }
+
 
         public void SetIconHandle(IconHandle iconHandle)
         {
             IconHandle = iconHandle;
+            Texture2D texture = IconHandle.GetTexture2D();
+            Image.image = texture;
+            NameLabel.text = IconHandle.IconName;
+            SizeLabel.text = $"{texture.width}x{texture.height}";
+
+            // TODO: Skin Bg
+            //_imageContainer.style.backgroundColor = 
         }
 
-        public void SwitchImageBackgroundSkin()
+        public void CopyIconContentCodeWithSkinToClipboard()
         {
-            SetImageBackgroundSkin(!_isImageBgInProSkin);
-        }
-
-        public void SetImageBackgroundSkin(bool isProSkin)
-        {
-            _isImageBgInProSkin = isProSkin;
-
-            // TODO: 切换 _imageContainer Skin
-            Debug.LogError("TODO: 切换 _imageContainer Skin");
-        }
-
-        public void CopyIconNameToClipboard()
-        {
-            //GUIUtility.systemCopyBuffer = 
+            string code = IconHandle.GetIconContentCodeWithSkin();
+            GUIUtility.systemCopyBuffer = code;
         }
 
         public void CopyIconContentCodeToClipboard()
         {
-            //EditorGUIUtility.IconContent("", "|");
-            //GUIUtility.systemCopyBuffer = 
+            string code = IconHandle.GetIconContentCode();
+            GUIUtility.systemCopyBuffer = code;
+        }
+
+        public void CopyIconNameCodeWithSkinToClipboard()
+        {
+            GUIUtility.systemCopyBuffer = IconHandle.GetNameCodeWithSkin();
+        }
+
+        public void CopyIconNameToClipboard()
+        {
+            GUIUtility.systemCopyBuffer = IconHandle.IconName;
         }
     }
 }

@@ -1,61 +1,158 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
 namespace GBG.EditorIconsOverview.Editor
 {
-    [Serializable]
     public class IconHandle
     {
-        public string IconName;
-        public bool HasSkin;
-        public bool Has2x;
+        public string IconName { get; }
+        public HashSet<string> IconNameSet { get; }
 
 
-        public IconHandle(string iconName, bool hasSkin, bool has2x)
+        public IconHandle(string iconName, HashSet<string> iconNameSet)
         {
             IconName = iconName;
-            HasSkin = hasSkin;
-            Has2x = has2x;
+            IconNameSet = iconNameSet;
         }
 
-        public string GetName(bool isProSkin, bool is2x)
+        public string GetCharacterlessName()
         {
-            string finalIconName;
-            if (HasSkin && isProSkin && !IconName.StartsWith("d_", StringComparison.OrdinalIgnoreCase))
+            string characterlessName = IconName;
+            if (characterlessName.StartsWith("d_", StringComparison.OrdinalIgnoreCase))
             {
-                if (Has2x && is2x && !IconName.EndsWith("@2x", StringComparison.OrdinalIgnoreCase))
-                {
-                    finalIconName = $"d_{IconName}@2x";
-                }
-                else
-                {
-                    finalIconName = $"d_{IconName}";
-                }
-            }
-            else
-            {
-                if (Has2x && is2x && !IconName.EndsWith("@2x", StringComparison.OrdinalIgnoreCase))
-                {
-                    finalIconName = $"{IconName}@2x";
-                }
-                else
-                {
-                    finalIconName = IconName;
-                }
+                characterlessName = characterlessName.Substring(2);
             }
 
-            return finalIconName;
+            if (characterlessName.EndsWith("@2x", StringComparison.OrdinalIgnoreCase))
+            {
+                characterlessName = characterlessName.Substring(0, characterlessName.Length - 3);
+            }
+
+            return characterlessName;
         }
 
-        public Texture2D GetTexture2D(bool isProSkin, bool is2x)
+        public Texture2D GetTexture2D()
         {
-            string finalIconName = GetName(isProSkin, is2x);
-            //Texture2D icon = (Texture2D)EditorGUIUtility.LoadRequired(finalIconName); // 加载到的Icon模糊
-            GUIContent iconContent = EditorGUIUtility.IconContent(finalIconName);
+            //Texture2D icon = (Texture2D)EditorGUIUtility.LoadRequired(IconName); // 加载到的Icon模糊
+            GUIContent iconContent = EditorGUIUtility.IconContent(IconName);
             Texture2D icon = (Texture2D)iconContent.image;
 
             return icon;
+        }
+
+        public bool HasSkin()
+        {
+            string anotherSkinName = GetAnotherSkinName(out _);
+            return IconNameSet.Contains(anotherSkinName);
+        }
+
+        public string GetAnotherSkinName(out bool anotherIsProSkin)
+        {
+            string anotherSkinName;
+            if (IconName.StartsWith("d_", StringComparison.OrdinalIgnoreCase))
+            {
+                anotherSkinName = IconName.Substring(2);
+                anotherIsProSkin = false;
+            }
+            else
+            {
+                anotherSkinName = "d_" + IconName;
+                anotherIsProSkin = true;
+            }
+
+            return anotherSkinName;
+        }
+
+        public string GetNameCodeWithSkin()
+        {
+            string anotherSkinName = GetAnotherSkinName(out bool anotherIsProSkin);
+            if (!IconNameSet.Contains(anotherSkinName))
+            {
+                return $"\"{IconName}\";";
+            }
+
+            if (anotherIsProSkin)
+            {
+                return $"EditorGUIUtility.isProSkin ? \"{anotherSkinName}\" : \"{IconName}\";";
+            }
+
+            return $"EditorGUIUtility.isProSkin ? \"{IconName}\" : \"{anotherSkinName}\";";
+        }
+
+        public string GetIconContentCodeWithSkin()
+        {
+            string anotherSkinName = GetAnotherSkinName(out bool anotherIsProSkin);
+            if (!IconNameSet.Contains(anotherSkinName))
+            {
+                return $"EditorGUIUtility.IconContent(\"{IconName}\", \"|\"); // tips: \"text|tooltip\"";
+            }
+
+            if (anotherIsProSkin)
+            {
+                return $"EditorGUIUtility.IconContent(EditorGUIUtility.isProSkin ? \"{anotherSkinName}\" : \"{IconName}\", \"|\"); // tips: \"text|tooltip\"";
+            }
+
+            return $"EditorGUIUtility.IconContent(EditorGUIUtility.isProSkin ? \"{IconName}\" : \"{anotherSkinName}\", \"|\"); // tips: \"text|tooltip\"";
+        }
+
+        public string GetIconContentCode()
+        {
+            return $"EditorGUIUtility.IconContent(\"{IconName}\", \"|\"); // tips: \"text|tooltip\"";
+        }
+
+
+        public static List<IconHandle> CreateHandles(IReadOnlyList<string> iconNames)
+        {
+            HashSet<string> iconNameSet = new HashSet<string>(iconNames);
+            List<IconHandle> handles = new List<IconHandle>();
+            for (int i = 0; i < iconNames.Count; i++)
+            {
+                string iconName = iconNames[i];
+                IconHandle handle = new IconHandle(iconName, iconNameSet);
+                handles.Add(handle);
+            }
+
+            handles.Sort(IconHandleComparison);
+            return handles;
+        }
+
+        public static int IconHandleComparison(IconHandle a, IconHandle b)
+        {
+            string characterlessNameA = a.GetCharacterlessName();
+            string characterlessNameB = b.GetCharacterlessName();
+            int ret = string.Compare(characterlessNameA, characterlessNameB, StringComparison.OrdinalIgnoreCase);
+            if (ret != 0)
+            {
+                return ret;
+            }
+
+            if (a.IconName.StartsWith("d_", StringComparison.OrdinalIgnoreCase) &&
+                !b.IconName.StartsWith("d_", StringComparison.OrdinalIgnoreCase))
+            {
+                return EditorGUIUtility.isProSkin ? 1 : -1;
+            }
+
+            if (!a.IconName.StartsWith("d_", StringComparison.OrdinalIgnoreCase) &&
+                b.IconName.StartsWith("d_", StringComparison.OrdinalIgnoreCase))
+            {
+                return EditorGUIUtility.isProSkin ? -1 : 1;
+            }
+
+            if (a.IconName.EndsWith("@2x", StringComparison.OrdinalIgnoreCase) &&
+                !b.IconName.EndsWith("@2x", StringComparison.OrdinalIgnoreCase))
+            {
+                return 1;
+            }
+
+            if (!a.IconName.EndsWith("@2x", StringComparison.OrdinalIgnoreCase) &&
+                b.IconName.EndsWith("@2x", StringComparison.OrdinalIgnoreCase))
+            {
+                return -1;
+            }
+
+            return 0;
         }
     }
 }

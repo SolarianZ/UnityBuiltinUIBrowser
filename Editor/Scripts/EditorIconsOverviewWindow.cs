@@ -1,5 +1,9 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace GBG.EditorIconsOverview.Editor
 {
@@ -12,12 +16,7 @@ namespace GBG.EditorIconsOverview.Editor
         }
 
 
-        #region Icons
-
-        [SerializeField]
-        private Texture2D _clipboardIcon;
-
-        #endregion
+        private ListView _listView;
 
 
         private void OnEnable()
@@ -27,9 +26,26 @@ namespace GBG.EditorIconsOverview.Editor
 
         private void CreateGUI()
         {
-            IconElement icon = new IconElement();
-            icon.Image.image = _clipboardIcon;
-            rootVisualElement.Add(icon);
+            string[] editorIconNames = EditorIconUtility.EnumerateEditorIconNames().ToArray();
+            List<IconHandle> iconHandles = IconHandle.CreateHandles(editorIconNames);
+
+            _listView = new ListView(iconHandles, IconElement.MinHeight, MakeItem, BindItem)
+            {
+                showAlternatingRowBackgrounds = AlternatingRowBackground.ContentOnly,
+            };
+            rootVisualElement.Add(_listView);
+        }
+
+        private VisualElement MakeItem()
+        {
+            return new IconElement();
+        }
+
+        private void BindItem(VisualElement element, int index)
+        {
+            IconElement iconElement = (IconElement)element;
+            IconHandle iconHandle = (IconHandle)_listView.itemsSource[index];
+            iconElement.SetIconHandle(iconHandle);
         }
 
 
@@ -37,8 +53,6 @@ namespace GBG.EditorIconsOverview.Editor
 
         void IHasCustomMenu.AddItemsToMenu(GenericMenu menu)
         {
-            menu.AddItem(new GUIContent("Export Editor Icons"), false, EditorIconUtility.ExportEditorIcons);
-            menu.AddItem(new GUIContent("Generate Editor Icon Markdown"), false, () => EditorIconUtility.GenerateEditorIconMarkdown());
         }
 
         #endregion
