@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 using UObject = UnityEngine.Object;
@@ -55,7 +56,10 @@ namespace GBG.EditorIconsOverview.Editor
             else if (asset is Texture)
                 ext = "png";
 
-            string savePath = EditorUtility.SaveFilePanelInProject($"Save {AssetName}", AssetName, ext,
+            string defaultName = AssetName;
+            if (!defaultName.EndsWith($".{ext}", StringComparison.OrdinalIgnoreCase))
+                defaultName = $"{AssetName}.{ext}";
+            string savePath = EditorUtility.SaveFilePanelInProject($"Save {AssetName}", defaultName, ext,
                  "Make sure the extension is correct");
             if (string.IsNullOrEmpty(savePath))
                 return;
@@ -66,6 +70,7 @@ namespace GBG.EditorIconsOverview.Editor
                 ScriptableObject newInstance = UObject.Instantiate(scriptableObject);
                 AssetDatabase.CreateAsset(newInstance, savePath);
                 AssetDatabase.Refresh();
+                EditorGUIUtility.PingObject(newInstance);
                 Debug.Log($"Export asset '{AssetName}' to {savePath}", newInstance);
                 return;
             }
@@ -77,7 +82,9 @@ namespace GBG.EditorIconsOverview.Editor
                 Graphics.CopyTexture(texture, readableTexture);
                 File.WriteAllBytes(savePath, readableTexture.EncodeToPNG());
                 AssetDatabase.Refresh();
-                Debug.Log($"Export asset '{AssetName}' to {savePath}", AssetDatabase.LoadAssetAtPath<UObject>(savePath));
+                UObject saved = AssetDatabase.LoadAssetAtPath<UObject>(savePath);
+                EditorGUIUtility.PingObject(saved);
+                Debug.Log($"Export asset '{AssetName}' to {savePath}", saved);
                 return;
             }
 
