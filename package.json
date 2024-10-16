@@ -1,6 +1,6 @@
 {
   "name": "com.greenbamboogames.builtinuiresbrowser",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "displayName": "Built-in UI Resources Browser!",
   "description": "Browser built-in icons, StyleSheets and VisualTreeAssets in Unity Editor.",
   "unity": "2019.4",
