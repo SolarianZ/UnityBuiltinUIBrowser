@@ -243,6 +243,16 @@ namespace GBG.EditorIconsOverview.Editor
 
         void IHasCustomMenu.AddItemsToMenu(GenericMenu menu)
         {
+            // Print All Asset Names
+            menu.AddItem(new GUIContent("Print All Asset Names"), false, () =>
+            {
+                string[] allAssetNames = BuiltinUIResUtility.GetEditorAssetBundle().GetAllAssetNames();
+                foreach (string assetName in allAssetNames)
+                {
+                    Debug.Log(assetName);
+                }
+            });
+
             // Source Code
             menu.AddItem(new GUIContent("Source Code"), false, () =>
             {
