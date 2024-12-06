@@ -24,6 +24,7 @@ namespace GBG.EditorIconsOverview.Editor
             style.flexGrow = 1;
             style.flexShrink = 0;
             style.alignSelf = Align.Stretch;
+            style.justifyContent = Justify.Center;
 
             RegisterCallback<GeometryChangedEvent>(OnGeometryChanged);
 
@@ -45,25 +46,40 @@ namespace GBG.EditorIconsOverview.Editor
         private void CalcImageDrawerSize()
         {
             Vector2 containerSize = localBound.size;
+            if (float.IsNaN(containerSize.x) || float.IsNaN(containerSize.y))
+                return;
+
             if (!Image || Image.height == 0 || containerSize.y == 0)
                 return;
 
             float imageWidth = Image.width;
             float imageHeight = Image.height;
-            float aspect = imageWidth / imageHeight;
-            float maxWidth = Mathf.Min(imageWidth, containerSize.x);
-            float maxHeight = Mathf.Min(imageHeight, containerSize.y);
-            float tempAspect = maxWidth / maxHeight;
-            if (tempAspect > 1 + 1E-3F)
+            float containerWidth = containerSize.x;
+            float containerHeight = containerSize.y;
+            if (imageWidth <= containerWidth && imageHeight <= containerHeight)
             {
-                maxWidth = aspect * maxHeight;
+                _imageDrawer.style.minWidth = _imageDrawer.style.maxWidth = imageWidth;
+                _imageDrawer.style.minHeight = _imageDrawer.style.maxHeight = imageHeight;
+                return;
             }
-            else if (tempAspect < 1 - 1E-3F)
+
+            float imageAspect = imageWidth / imageHeight;
+            float containerAspect = containerWidth / containerHeight;
+            if (imageAspect >= containerAspect)
             {
-                maxHeight = maxWidth / aspect;
+                // scale image width to container width
+                imageWidth = containerWidth;
+                imageHeight = imageWidth / imageAspect;
             }
-            _imageDrawer.style.minWidth = _imageDrawer.style.maxWidth = maxWidth;
-            _imageDrawer.style.minHeight = _imageDrawer.style.maxHeight = maxHeight;
+            else
+            {
+                // scale image height to container height
+                imageHeight = containerHeight;
+                imageWidth = imageHeight * imageAspect;
+            }
+
+            _imageDrawer.style.minWidth = _imageDrawer.style.maxWidth = imageWidth;
+            _imageDrawer.style.minHeight = _imageDrawer.style.maxHeight = imageHeight;
         }
 
         private void DrawImage()
